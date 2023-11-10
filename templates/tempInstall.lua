@@ -30,13 +30,14 @@ file:close()
 local file = io.open(filePath, "w")
 local contenu_a_ajouter = [[
 function loadAPI (path)
-    local envDirPath = shell.getRunningProgram()
+    local envDirPath = "]] .. filePath .. [["
     envDirPath = envDirPath:match("(.*/)")
     local basePath = envDirPath
     local fullPath = fs.combine(basePath, path)
     os.loadAPI(fullPath)
 end
 ]]
+
 file:write(contenu_a_ajouter)
 file:write(contenu_actuel)
 {% endfor %}
