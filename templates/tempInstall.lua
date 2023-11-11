@@ -40,7 +40,7 @@ end
 
 file:write(contenu_a_ajouter)
 file:write(contenu_actuel)
-file.close()
+file:close()
 {% endfor %}
 
 -- manage update
