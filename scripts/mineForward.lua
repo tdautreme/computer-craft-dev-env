@@ -1,14 +1,16 @@
 loadAPI("lib/turtleLib")
+loadAPI("lib/utils")
 
-function onMove(onMoveCallback)
+function onMove(onMoveCallback, iteration)
     if onMoveCallback ~= nil then
-        onMoveCallback()
+        onMoveCallback(iteration)
     end
 end
 
 function main(width, height, length, onMoveCallback)
     width = width - 1
     local ctrY = 0
+    local ctrX = 0
     for z = 1, length do
         for y = 1 , height do
             -- turn
@@ -21,7 +23,8 @@ function main(width, height, length, onMoveCallback)
             for x = 1, width do
                 -- dig forward
                 turtleLib.forwardOrDigWhileCant()
-                onMove(onMoveCallback)
+                onMove(onMoveCallback, ctrX)
+                ctrX = ctrX + 1
             end
 
             -- turn reverse
@@ -35,17 +38,17 @@ function main(width, height, length, onMoveCallback)
             if y <= height - 1 then
                 if z % 2 == 0 then
                     turtleLib.downOrDigWhileCant()
-                    onMove(onMoveCallback)
+                    onMove(onMoveCallback, ctrX)
                 else
                     turtleLib.upOrDigWhileCant()
-                    onMove(onMoveCallback)
+                    onMove(onMoveCallback, ctrX)
                 end  
             end
             ctrY = ctrY + 1
         end
         if z <= length - 1 then
             turtleLib.forwardOrDigWhileCant()
-            onMove(onMoveCallback)
+            onMove(onMoveCallback, ctrX)
         end
     end
 
@@ -54,7 +57,7 @@ function main(width, height, length, onMoveCallback)
     -- reverse z
     for z = 1, length - 1 do
         turtleLib.forwardOrDigWhileCant()
-        onMove(onMoveCallback)
+        onMove(onMoveCallback, ctrX)
     end
 
     local heightXLength = height * length
@@ -63,7 +66,7 @@ function main(width, height, length, onMoveCallback)
     if length % 2 ~= 0 then
         for y = 1, height - 1 do
             turtleLib.downOrDigWhileCant()
-            onMove(onMoveCallback)
+            onMove(onMoveCallback, ctrX)
         end
     end
 
@@ -78,5 +81,43 @@ function main(width, height, length, onMoveCallback)
     turtleLib.turnAround()
 end
 
+itemBlacklist = {
+    "minecraft:cobblestone",
+    "minecraft:dirt",
+    "minecraft:gravel",
+    "minecraft:granite",
+    "minecraft:andesite",
+    "minecraft:diorite",
+    "minecraft:stone",
+    "minecraft:flint",
+    "minecraft:gravel",
+    "minecraft:sand",
+    "minecraft:sandstone",
+    "minecraft:torch",
+    "minecraft:bedrock",
+    "minecraft:stone",
+    "minecraft:cobbled_deepslate",
+    "minecraft:tuff"
+}
+
+function onMoveHandler(iteration)
+    if iteration % 10 == 0 then
+        cleanInventory()
+    end
+end
+
+function cleanInventory()
+    for i = 1, 16 do
+        turtle.select(i)
+        item = turtle.getItemDetail()
+        isInList = item ~= nil and utils.tableContainElement(itemBlacklist, item["name"])
+        if isInList then
+            turtle.dropDown()
+        end
+    end
+    turtle.select(1)
+end
+
+
 local args = { ... }
-main(args[1], args[2], args[3])
+main(args[1], args[2], args[3], onMoveHandler)

@@ -17,7 +17,7 @@ if fs.exists(envFolderPath) then
 end
 
 {% for file in files %}
-local filePath = envFolderPath .."/{{ file.rsplit( ".", 1 )[ 0 ] }}"
+local filePath = envFolderPath .."/{{ file }}"
 local command = "wget {{ url }}{{ file }} ".. filePath
 shell.run(command)
 print(" ")
@@ -34,12 +34,13 @@ function loadAPI (path)
     envDirPath = envDirPath:match("(.*/)")
     local basePath = envDirPath
     local fullPath = fs.combine(basePath, path)
-    os.loadAPI(fullPath)
+    os.loadAPI(fullPath .. ".lua")
 end
 ]]
 
 file:write(contenu_a_ajouter)
 file:write(contenu_actuel)
+file.close()
 {% endfor %}
 
 -- manage update
