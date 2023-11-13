@@ -12,6 +12,61 @@ function digDownWhileCan()
     while (turtle.digDown()) do end
 end
 
+function forwardOrDigWhileCantBlockIds(breakableBlockIds)
+    while (not turtle.forward()) do
+        while true do
+            if turtle.detect() then
+                local success, frontBlock = turtle.inspect()
+                if frontBlock ~= nil and breakableBlockIds ~= nil and utils.tableContainElement(breakableBlockIds, frontBlock["name"]) then
+                    turtle.dig()
+                else
+                    return false -- return false if front block is not breakable
+                end
+            else
+                break -- break if no front block
+            end
+        end
+    end
+    return true
+end
+
+function upOrDigWhileCantBlockIds(breakableBlockIds)
+    while (not turtle.up()) do
+        while true do
+            if turtle.detectUp() then
+                local success, frontBlock = turtle.inspectUp()
+                if frontBlock ~= nil and breakableBlockIds ~= nil and utils.tableContainElement(breakableBlockIds, frontBlock["name"]) then
+                    turtle.digUp()
+                else
+                    return false -- return false if front block is not breakable
+                end
+            else
+                break -- break if no front block
+            end
+        end
+    end
+    return true
+end
+
+function downOrDigWhileCantBlockIds(breakableBlockIds)
+    while (not turtle.down()) do
+        while true do
+            if turtle.detectDown() then
+                local success, frontBlock = turtle.inspectDown()
+                if frontBlock ~= nil and breakableBlockIds ~= nil and utils.tableContainElement(breakableBlockIds, frontBlock["name"]) then
+                    turtle.digDown()
+                else
+                    return false -- return false if front block is not breakable
+                end
+            else
+                break -- break if no front block
+            end
+        end
+    end
+    return true
+end
+
+
 function forwardOrDigWhileCant()
     while (not turtle.forward()) do
         digWhileCan()

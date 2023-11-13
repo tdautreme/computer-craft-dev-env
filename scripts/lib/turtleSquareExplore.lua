@@ -1,15 +1,14 @@
 loadAPI("./turtleLib")
 
-function run(onBeforeMoveCallback)
+function run(onBeforeMoveCallback, breakableBlockIds)
     -- first step is to find a corner
     print("Fiding corner...")
-    while not turtle.detect() do
-        turtle.forward()
-    end
+
+    repeat   
+    until not turtleLib.forwardOrDigWhileCantBlockIds(breakableBlockIds)
     turtle.turnLeft()
-    while not turtle.detect() do
-        turtle.forward()
-    end
+    repeat   
+    until not turtleLib.forwardOrDigWhileCantBlockIds(breakableBlockIds)
     turtle.turnLeft()
 
     print("Start farm...")
@@ -20,14 +19,14 @@ function run(onBeforeMoveCallback)
             if onBeforeMoveCallback ~= nil then
                 onBeforeMoveCallback()
             end
-        until not turtle.forward()
+        until not turtleLib.forwardOrDigWhileCantBlockIds(breakableBlockIds)
         if not side then
             turtle.turnLeft()
         else
             turtle.turnRight()
         end
 
-        if not turtle.forward() then -- if we are arrived to wall, reverse
+        if not turtleLib.forwardOrDigWhileCantBlockIds(breakableBlockIds) then -- if we are arrived to wall, reverse
             turtleLib.turnAround()
             side = not side
         end
